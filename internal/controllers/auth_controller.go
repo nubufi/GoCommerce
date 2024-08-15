@@ -1,74 +1,100 @@
 package controllers
 
 import (
+	"net/http"
+
 	"GoCommerce/internal/db"
 	"GoCommerce/internal/models"
+	"GoCommerce/internal/repositories"
 	"GoCommerce/internal/utils"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
 
-
+var userRepo = repositories.NewUserRepository(db.DB)
 func SignUp(c *gin.Context) {
 	// Get the JSON body and decode into variables
 	var user models.User
 	if err := c.BindJSON(&user); err != nil {
-		c.JSON(400, gin.H{"error": "Invalid input"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
 	}
 
 	// Hash the password
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		c.JSON(500, gin.H{"error": "Can not hash the password"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Can not hash the password"})
+		return
 	}
 
 	// Create the user
 	user.Password = string(hash)
 	user.UserID = utils.GenerateRandomID()
-	if err := db.DB.Create(&user).Error; err != nil {
-		c.JSON(500, gin.H{"error": "Can not create the user"})
+	
+
+	if err := userRepo.CreateUser(&user); err != nil {
+		c.JSON(http.StatusConflict, gin.H{"error": "This email is already taken"})
+		return
 	}
 
 	setToken(c, user)
 
-	c.JSON(200, gin.H{"user": user})
+	c.JSON(http.StatusCreated, gin.H{"user": user})
 }
 
 type body struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
+
 func SignIn(c *gin.Context) {
 	// Get the JSON body and decode into variables
 	var body body
 	if err := c.BindJSON(&body); err != nil {
-		c.JSON(400, gin.H{"error": "Invalid input"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
 	}
 
 	// Find the user
-	var user models.User
-	db.DB.First(&user, "email = ?", body.Email)
-
-	if user.ID == 0 {
-		c.JSON(404, gin.H{"error": "User not found"})
+	user, err := userRepo.FindUserByEmail(body.Email)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
 	}
 
 	// Compare the password
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password)); err != nil {
-		c.JSON(401, gin.H{"error": "Invalid password"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid password"})
+		return
 	}
 
-	setToken(c, user)
+	setToken(c, *user)
 
-	c.JSON(200, gin.H{"user": user})
+	c.JSON(http.StatusOK, gin.H{"user": user})
+}
+
+func SignOut(c *gin.Context) {
+	c.SetCookie("token", "", -1, "/", "", false, true)
+	c.JSON(http.StatusNoContent, nil)
+}
+
+func DeleteAccount(c *gin.Context) {
+	userID := GetUserID(c)
+
+	if err := userRepo.DeleteUser(userID); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete the user"})
+		return
+	}
+
+	c.SetCookie("token", "", -1, "/", "", false, true)
+	c.JSON(http.StatusNoContent, nil)
 }
 
 func setToken(c *gin.Context, user models.User) {
 	tokenString, err := utils.CreateToken(user)
 	if err != nil {
-		c.JSON(500, gin.H{"error": "Failed to sign token"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to sign token"})
 		return
 	}
 
@@ -80,9 +106,3 @@ func GetUserID(c *gin.Context) string {
 	userID, _ := c.Get("userID")
 	return userID.(string)
 }
-
-func SignOut(c *gin.Context) {
-	c.SetCookie("token", "", -1, "/", "", false, true)
-	c.Redirect(http.StatusFound, "/signin")
-}
-

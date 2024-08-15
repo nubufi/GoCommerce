@@ -17,9 +17,18 @@ func init() {
 func main() {
 	app := gin.New()
 
-	app.POST("/signup", controllers.SignUp)
-	app.POST("/signin", controllers.SignIn)
-	app.GET("/signout", controllers.SignOut)
+	auth := app.Group("/auth")
+	auth.POST("/signup", controllers.SignUp)
+	auth.POST("/signin", controllers.SignIn)
+	auth.GET("/signout", controllers.SignOut)
+	
+	order := app.Group("/order")
+	order.POST("/create", controllers.CreateOrder)
+	order.GET("/list", controllers.GetOrders)
+	order.GET("/show/:id", controllers.GetOrderByID)
+	order.GET("/show-by-user/:id", controllers.GetOrdersByUserID)
+	order.PUT("/update/:id", controllers.UpdateOrder)
+	order.DELETE("/delete/:id", controllers.DeleteOrder)
 
 	app.Run()
 }

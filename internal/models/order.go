@@ -11,11 +11,11 @@ type Order struct {
 	PaymentStatus   string  `json:"payment_status"`
 	OrderDate       string  `json:"order_date"`
 	ShippingAddress string  `json:"shipping_address"`
+	OrderItems      []OrderItem `json:"order_items"`
 }
 
 type OrderItem struct {
 	gorm.Model
-	OrderID    uint    `json:"order_id"`
 	ProductID  uint    `json:"product_id"`
 	Quantity   int     `json:"quantity"`
 	UnitPrice  float64 `json:"unit_price"`

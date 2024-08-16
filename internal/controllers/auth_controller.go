@@ -12,8 +12,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var userRepo = repositories.NewUserRepository(db.DB)
 func SignUp(c *gin.Context) {
+	userRepo := repositories.NewUserRepository(db.DB)
 	// Get the JSON body and decode into variables
 	var user models.User
 	if err := c.BindJSON(&user); err != nil {
@@ -49,6 +49,7 @@ type body struct {
 }
 
 func SignIn(c *gin.Context) {
+	userRepo := repositories.NewUserRepository(db.DB)
 	// Get the JSON body and decode into variables
 	var body body
 	if err := c.BindJSON(&body); err != nil {
@@ -80,6 +81,7 @@ func SignOut(c *gin.Context) {
 }
 
 func DeleteAccount(c *gin.Context) {
+	userRepo := repositories.NewUserRepository(db.DB)
 	userID := GetUserID(c)
 
 	if err := userRepo.DeleteUser(userID); err != nil {

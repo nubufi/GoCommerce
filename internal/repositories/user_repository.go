@@ -1,8 +1,8 @@
 package repositories
 
-
 import (
 	"GoCommerce/internal/models"
+
 	"gorm.io/gorm"
 )
 
@@ -43,9 +43,9 @@ func (r *userRepository) FindUserByID(id string) (*models.User, error) {
 	var user models.User
 	err := r.db.Where("user_id = ?", id).First(&user).Error
 	if err != nil {
+		return nil, err
 	}
 	return &user, nil
-	return nil, err
 }
 
 // UpdateUser updates an existing user in the database
@@ -56,5 +56,4 @@ func (r *userRepository) UpdateUser(user *models.User) error {
 // DeleteUser deletes a user by their ID
 func (r *userRepository) DeleteUser(id string) error {
 	return r.db.Where("user_id = ?", id).Delete(&models.User{}).Error
-
 }

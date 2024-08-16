@@ -9,6 +9,7 @@ import (
 // OrderRepository defines the interface for order-related operations
 type OrderRepository interface {
 	CreateOrder(order *models.Order, items []models.OrderItem) error
+	GetOrders() ([]models.Order, error)
 	GetOrderByID(orderID uint) (*models.Order, error)
 	GetOrdersByUserID(userID string) ([]models.Order, error)
 	UpdateOrder(order *models.Order) error
@@ -36,19 +37,7 @@ func (r *orderRepository) GetOrders() ([]models.Order, error) {
 
 // CreateOrder creates a new order and its associated order items
 func (r *orderRepository) CreateOrder(order *models.Order, items []models.OrderItem) error {
-	// Wrap the operation in a transaction to ensure atomicity
-	return r.db.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Create(order).Error; err != nil {
-			return err
-		}
-
-		// Insert the order items
-		if err := tx.Create(&items).Error; err != nil {
-			return err
-		}
-
-		return nil
-	})
+	return r.db.Create(order).Error
 }
 
 // GetOrderByID retrieves an order by its ID along with its associated order items

@@ -31,7 +31,7 @@ func ConnectToDb() {
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
-
+	DB.Debug()
 	log.Println("Connected to database")
 }
 
@@ -40,7 +40,6 @@ func Migrate() {
 	DB.AutoMigrate(
 		&models.User{},
 		&models.Product{},
-		&models.Category{},
 		&models.Order{},
 		&models.OrderItem{},
 		&models.Payment{},

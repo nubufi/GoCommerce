@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"GoCommerce/internal/db"
 	"GoCommerce/internal/models"
 
 	"gorm.io/gorm"
@@ -27,15 +28,23 @@ func NewProductRepository(db *gorm.DB) ProductRepository {
 
 // GetProducts retrieves all products
 func (r *productRepository) GetProducts() ([]models.Product, error) {
+	// Check if the orders are already cached
+	cachedProducts, err := db.GetCache("products", []models.Product{})
+	if err == nil {
+		return cachedProducts, nil
+	}
 	var products []models.Product
 	if err := r.db.Find(&products).Error; err != nil {
 		return nil, err
 	}
+	// Cache the orders for future use
+	db.SetCache("products", products)
 	return products, nil
 }
 
 // CreateProduct creates a new order and its associated order items
 func (r *productRepository) CreateProduct(product *models.Product) error {
+	db.ClearCache("products")
 	return r.db.Create(product).Error
 }
 
@@ -50,10 +59,12 @@ func (r *productRepository) GetProductByID(productID uint) (*models.Product, err
 
 // UpdateProduct updates an existing product
 func (r *productRepository) UpdateProduct(product *models.Product) error {
+	db.ClearCache("products")
 	return r.db.Save(product).Error
 }
 
 // DeleteProduct deletes an existing product
 func (r *productRepository) DeleteProduct(productID uint) error {
+	db.ClearCache("products")
 	return r.db.Delete(&models.Product{}, productID).Error
 }

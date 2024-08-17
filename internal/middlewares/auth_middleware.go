@@ -18,6 +18,7 @@ func AuthMiddleware(c *gin.Context) {
 	tokenString, err := c.Cookie("token")
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "No token provided"})
+		c.Abort()
 		return
 	}
 
@@ -27,12 +28,14 @@ func AuthMiddleware(c *gin.Context) {
 	})
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		c.Abort()
 		return
 	}
 
 	// Check if the token is valid
 	if !token.Valid {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		c.Abort()
 		return
 	}
 

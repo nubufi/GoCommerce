@@ -9,9 +9,6 @@ services:
     depends_on:
       - mysql
       - redis
-    environment:
-      MYSQL_PORT: 3306
-      REDIS_PORT: 6379
     networks:
       - go-commerce_network
     volumes:

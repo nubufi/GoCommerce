@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"GoCommerce/internal/db"
 	"GoCommerce/internal/models"
 
 	"gorm.io/gorm"
@@ -28,15 +29,23 @@ func NewOrderRepository(db *gorm.DB) OrderRepository {
 
 // GetOrders retrieves all orders along with their associated order items
 func (r *orderRepository) GetOrders() ([]models.Order, error) {
+	// Check if the orders are already cached
+	cachedOrders, err := db.GetCache("orders", []models.Order{})
+	if err == nil {
+		return cachedOrders, nil
+	}
 	var orders []models.Order
 	if err := r.db.Find(&orders).Error; err != nil {
 		return nil, err
 	}
+	// Cache the orders for future use
+	db.SetCache("orders", orders)
 	return orders, nil
 }
 
 // CreateOrder creates a new order and its associated order items
 func (r *orderRepository) CreateOrder(order *models.Order, items []models.OrderItem) error {
+	db.ClearCache("orders")
 	return r.db.Create(order).Error
 }
 
@@ -60,11 +69,13 @@ func (r *orderRepository) GetOrdersByUserID(userID string) ([]models.Order, erro
 
 // UpdateOrder updates an existing order in the database
 func (r *orderRepository) UpdateOrder(order *models.Order) error {
+	db.ClearCache("orders")
 	return r.db.Save(order).Error
 }
 
 // DeleteOrder deletes an order and its associated order items by its ID
 func (r *orderRepository) DeleteOrder(orderID uint) error {
+	db.ClearCache("orders")
 	// Wrap the operation in a transaction to ensure atomicity
 	return r.db.Transaction(func(tx *gorm.DB) error {
 		// Delete the order items first

@@ -11,6 +11,7 @@ import (
 
 func init() {
 	godotenv.Load()
+	db.ConnectToRedis()
 	db.ConnectToDb()
 	db.Migrate()
 }

@@ -36,7 +36,7 @@ func SetCache(key string, value interface{}) {
 	RedisClient.Set(ctx, key, jsonOrders, 0)
 }
 
-func GetCache[T models.Order | models.Product](key string, object []T) ([]T, error) {
+func GetCache[T models.Order | models.Product | models.CartItem](key string, object []T) ([]T, error) {
 	ctx := context.Background()
 	val := RedisClient.Get(ctx, key).Val()
 

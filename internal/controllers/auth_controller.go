@@ -18,6 +18,7 @@ func SignUp(c *gin.Context) {
 	var user models.User
 	if err := c.BindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		c.Abort()
 		return
 	}
 
@@ -25,16 +26,17 @@ func SignUp(c *gin.Context) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Can not hash the password"})
+		c.Abort()
 		return
 	}
 
 	// Create the user
 	user.Password = string(hash)
 	user.UserID = utils.GenerateRandomID()
-	
 
 	if err := userRepo.CreateUser(&user); err != nil {
 		c.JSON(http.StatusConflict, gin.H{"error": "This email is already taken"})
+		c.Abort()
 		return
 	}
 
@@ -54,6 +56,7 @@ func SignIn(c *gin.Context) {
 	var body body
 	if err := c.BindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		c.Abort()
 		return
 	}
 
@@ -61,12 +64,14 @@ func SignIn(c *gin.Context) {
 	user, err := userRepo.FindUserByEmail(body.Email)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		c.Abort()
 		return
 	}
 
 	// Compare the password
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password)); err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid password"})
+		c.Abort()
 		return
 	}
 
@@ -86,6 +91,7 @@ func DeleteAccount(c *gin.Context) {
 
 	if err := userRepo.DeleteUser(userID); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete the user"})
+		c.Abort()
 		return
 	}
 
@@ -97,6 +103,7 @@ func setToken(c *gin.Context, user models.User) {
 	tokenString, err := utils.CreateToken(user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to sign token"})
+		c.Abort()
 		return
 	}
 

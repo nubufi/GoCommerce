@@ -17,12 +17,14 @@ func CreateOrder(c *gin.Context) {
 	var order models.Order
 	if err := c.BindJSON(&order); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		c.Abort()
 		return
 	}
 
 	// Create the order
 	if err := orderRepo.CreateOrder(&order, order.OrderItems); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Can not create the order"})
+		c.Abort()
 		return
 	}
 
@@ -34,6 +36,7 @@ func GetOrders(c *gin.Context) {
 	orders, err := orderRepo.GetOrders()
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Orders not found"})
+		c.Abort()
 		return
 	}
 
@@ -47,6 +50,7 @@ func GetOrderByID(c *gin.Context) {
 	order, err := orderRepo.GetOrderByID(orderID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Order not found"})
+		c.Abort()
 		return
 	}
 
@@ -60,6 +64,7 @@ func GetOrdersByUserID(c *gin.Context) {
 	orders, err := orderRepo.GetOrdersByUserID(userID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Orders not found"})
+		c.Abort()
 		return
 	}
 
@@ -71,11 +76,13 @@ func UpdateOrder(c *gin.Context) {
 	var order models.Order
 	if err := c.BindJSON(&order); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		c.Abort()
 		return
 	}
 
 	if err := orderRepo.UpdateOrder(&order); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Can not update the order"})
+		c.Abort()
 		return
 	}
 
@@ -88,6 +95,7 @@ func DeleteOrder(c *gin.Context) {
 
 	if err := orderRepo.DeleteOrder(orderID); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Can not delete the order"})
+		c.Abort()
 		return
 	}
 

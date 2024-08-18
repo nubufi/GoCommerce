@@ -43,10 +43,6 @@ func Migrate() {
 		&models.Product{},
 		&models.Order{},
 		&models.OrderItem{},
-		&models.Payment{},
-		&models.Shipping{},
-		&models.Cart{},
 		&models.CartItem{},
-		&models.Inventory{},
 	)
 }

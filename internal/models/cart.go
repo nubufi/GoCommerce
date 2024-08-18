@@ -2,14 +2,10 @@ package models
 
 import "gorm.io/gorm"
 
-type Cart struct {
-	gorm.Model
-	UserID uint `json:"user_id"`
-}
-
 type CartItem struct {
 	gorm.Model
-	CartID    uint `json:"cart_id"`
-	ProductID uint `json:"product_id"`
-	Quantity  int  `json:"quantity"`
+	UserID    string  `json:"user_id" binding:"required"`
+	ProductID uint  `json:"product_id" binding:"required" `
+	Quantity  int     `json:"quantity" binding:"required"`
+	Price     float64 `json:"price" binding:"required"`
 }

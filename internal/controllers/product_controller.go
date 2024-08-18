@@ -17,12 +17,14 @@ func CreateProduct(c *gin.Context) {
 	var product models.Product
 	if err := c.BindJSON(&product); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		c.Abort()
 		return
 	}
 
 	// Create the product
 	if err := productRepo.CreateProduct(&product); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Can not create the product"})
+		c.Abort()
 		return
 	}
 
@@ -34,6 +36,7 @@ func GetProducts(c *gin.Context) {
 	products, err := productRepo.GetProducts()
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Products not found"})
+		c.Abort()
 		return
 	}
 
@@ -47,6 +50,7 @@ func GetProductByID(c *gin.Context) {
 	product, err := productRepo.GetProductByID(productID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
+		c.Abort()
 		return
 	}
 
@@ -61,6 +65,7 @@ func UpdateProduct(c *gin.Context) {
 	var product models.Product
 	if err := c.BindJSON(&product); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		c.Abort()
 		return
 	}
 
@@ -68,6 +73,7 @@ func UpdateProduct(c *gin.Context) {
 	product.ID = productID
 	if err := productRepo.UpdateProduct(&product); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Can not update the product"})
+		c.Abort()
 		return
 	}
 
@@ -80,9 +86,9 @@ func DeleteProduct(c *gin.Context) {
 
 	if err := productRepo.DeleteProduct(productID); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Can not delete the product"})
+		c.Abort()
 		return
 	}
 
 	c.JSON(http.StatusNoContent, nil)
 }
-

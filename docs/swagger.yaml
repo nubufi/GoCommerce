@@ -1,0 +1,986 @@
+info:
+  contact: {}
+paths:
+  /auth/delete:
+    delete:
+      description: Deletes the account and signs out the user
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Delete the account
+      tags:
+      - Auth
+  /auth/signin:
+    post:
+      consumes:
+      - application/json
+      description: Signs in the user, returns the user details and sets the jwt token
+      parameters:
+      - description: Login details
+        in: body
+        name: user
+        required: true
+        schema:
+          properties:
+            email:
+              type: string
+            password:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              user:
+                properties:
+                  created_at:
+                    type: string
+                  email:
+                    type: string
+                  first_name:
+                    type: string
+                  last_name:
+                    type: string
+                  role:
+                    type: string
+                  user_id:
+                    type: string
+                type: object
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Sign in
+      tags:
+      - Auth
+  /auth/signout:
+    get:
+      description: Signs out the user
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      summary: Sign out
+      tags:
+      - Auth
+  /auth/signup:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user
+      parameters:
+      - description: User details
+        in: body
+        name: user
+        required: true
+        schema:
+          properties:
+            email:
+              type: string
+            first_name:
+              type: string
+            last_name:
+              type: string
+            password:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            properties:
+              user:
+                properties:
+                  created_at:
+                    type: string
+                  email:
+                    type: string
+                  first_name:
+                    type: string
+                  last_name:
+                    type: string
+                  role:
+                    type: string
+                  user_id:
+                    type: string
+                type: object
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Create a new user
+      tags:
+      - Auth
+  /cart/create:
+    post:
+      consumes:
+      - application/json
+      description: Create a new cart item
+      parameters:
+      - description: Cart item details
+        in: body
+        name: cart_item
+        required: true
+        schema:
+          properties:
+            price:
+              type: number
+            product_id:
+              type: integer
+            quantity:
+              type: integer
+            user_id:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            properties:
+              cartItem:
+                properties:
+                  created_at:
+                    type: string
+                  id:
+                    type: integer
+                  price:
+                    type: number
+                  product_id:
+                    type: integer
+                  quantity:
+                    type: integer
+                  user_id:
+                    type: string
+                type: object
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Create a new cart item
+      tags:
+      - Cart
+  /cart/delete/{id}:
+    delete:
+      description: Delete a cart item
+      parameters:
+      - description: Cart Item ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Delete a cart item
+      tags:
+      - Cart
+  /cart/empty/{id}:
+    delete:
+      description: Empties the cart of a user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Empty the cart
+      tags:
+      - Cart
+  /cart/list:
+    get:
+      description: Get all cart items
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              cartItems:
+                items:
+                  properties:
+                    created_at:
+                      type: string
+                    id:
+                      type: integer
+                    price:
+                      type: number
+                    product_id:
+                      type: integer
+                    quantity:
+                      type: integer
+                    user_id:
+                      type: string
+                  type: object
+                type: array
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Get all cart items
+      tags:
+      - Cart
+  /cart/show-by-user/{id}:
+    get:
+      description: Get all cart items by user ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              cartItems:
+                items:
+                  properties:
+                    created_at:
+                      type: string
+                    id:
+                      type: integer
+                    price:
+                      type: number
+                    product_id:
+                      type: integer
+                    quantity:
+                      type: integer
+                    user_id:
+                      type: string
+                  type: object
+                type: array
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Get all cart items by user ID
+      tags:
+      - Cart
+  /cart/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update a cart item
+      parameters:
+      - description: Cart Item ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Cart item details
+        in: body
+        name: cart_item
+        required: true
+        schema:
+          properties:
+            price:
+              type: number
+            product_id:
+              type: integer
+            quantity:
+              type: integer
+            user_id:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              cartItem:
+                properties:
+                  created_at:
+                    type: string
+                  id:
+                    type: integer
+                  price:
+                    type: number
+                  product_id:
+                    type: integer
+                  quantity:
+                    type: integer
+                  user_id:
+                    type: string
+                type: object
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Update a cart item
+      tags:
+      - Cart
+  /order/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get an order by ID
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              created_at:
+                type: string
+              id:
+                type: integer
+              order_items:
+                items:
+                  properties:
+                    product_id:
+                      type: integer
+                    quantity:
+                      type: number
+                    total_price:
+                      type: number
+                    unit_price:
+                      type: number
+                  type: object
+                type: array
+              payment_method:
+                type: string
+              shipping_address:
+                type: string
+              total_price:
+                type: number
+              user_id:
+                type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Get an order by ID
+      tags:
+      - Order
+  /order/all:
+    get:
+      consumes:
+      - application/json
+      description: Get all orders
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              orders:
+                items:
+                  properties:
+                    created_at:
+                      type: string
+                    id:
+                      type: integer
+                    order_items:
+                      items:
+                        properties:
+                          product_id:
+                            type: integer
+                          quantity:
+                            type: number
+                          total_price:
+                            type: number
+                          unit_price:
+                            type: number
+                        type: object
+                      type: array
+                    payment_method:
+                      type: string
+                    shipping_address:
+                      type: string
+                    total_price:
+                      type: number
+                    user_id:
+                      type: string
+                  type: object
+                type: array
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Get all orders
+      tags:
+      - Order
+  /order/create:
+    post:
+      consumes:
+      - application/json
+      description: Create a new order
+      parameters:
+      - description: Order details
+        in: body
+        name: order
+        required: true
+        schema:
+          properties:
+            order_items:
+              items:
+                properties:
+                  product_id:
+                    type: integer
+                  quantity:
+                    type: number
+                  total_price:
+                    type: number
+                  unit_price:
+                    type: number
+                type: object
+              type: array
+            payment_method:
+              type: string
+            shipping_address:
+              type: string
+            total_price:
+              type: number
+            user_id:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            properties:
+              created_at:
+                type: string
+              id:
+                type: integer
+              order_items:
+                items:
+                  properties:
+                    product_id:
+                      type: integer
+                    quantity:
+                      type: number
+                    total_price:
+                      type: number
+                    unit_price:
+                      type: number
+                  type: object
+                type: array
+              payment_method:
+                type: string
+              shipping_address:
+                type: string
+              total_price:
+                type: number
+              user_id:
+                type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Create a new order
+      tags:
+      - Order
+  /order/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an order
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Delete an order
+      tags:
+      - Order
+  /order/update:
+    put:
+      consumes:
+      - application/json
+      description: Update an order
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Order details
+        in: body
+        name: order
+        required: true
+        schema:
+          properties:
+            order_items:
+              items:
+                properties:
+                  product_id:
+                    type: integer
+                  quantity:
+                    type: number
+                  total_price:
+                    type: number
+                  unit_price:
+                    type: number
+                type: object
+              type: array
+            payment_method:
+              type: string
+            shipping_address:
+              type: string
+            total_price:
+              type: number
+            user_id:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              created_at:
+                type: string
+              id:
+                type: integer
+              order_items:
+                items:
+                  properties:
+                    product_id:
+                      type: integer
+                    quantity:
+                      type: number
+                    total_price:
+                      type: number
+                    unit_price:
+                      type: number
+                  type: object
+                type: array
+              payment_method:
+                type: string
+              shipping_address:
+                type: string
+              total_price:
+                type: number
+              user_id:
+                type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Update an order
+      tags:
+      - Order
+  /order/user/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get all orders by user ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              orders:
+                items:
+                  properties:
+                    created_at:
+                      type: string
+                    id:
+                      type: integer
+                    order_items:
+                      items:
+                        properties:
+                          product_id:
+                            type: integer
+                          quantity:
+                            type: number
+                          total_price:
+                            type: number
+                          unit_price:
+                            type: number
+                        type: object
+                      type: array
+                    payment_method:
+                      type: string
+                    shipping_address:
+                      type: string
+                    total_price:
+                      type: number
+                    user_id:
+                      type: string
+                  type: object
+                type: array
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Get all orders by user ID
+      tags:
+      - Order
+  /product/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a product
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Delete a product
+      tags:
+      - Product
+    get:
+      consumes:
+      - application/json
+      description: Get a product by ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              description:
+                type: string
+              id:
+                type: integer
+              name:
+                type: string
+              price:
+                type: number
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Get a product by ID
+      tags:
+      - Product
+    put:
+      consumes:
+      - application/json
+      description: Update a product
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Product details
+        in: body
+        name: product
+        required: true
+        schema:
+          properties:
+            description:
+              type: string
+            name:
+              type: string
+            price:
+              type: number
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              description:
+                type: string
+              id:
+                type: integer
+              name:
+                type: string
+              price:
+                type: number
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Update a product
+      tags:
+      - Product
+  /product/all:
+    get:
+      consumes:
+      - application/json
+      description: Get all products
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              products:
+                items:
+                  properties:
+                    description:
+                      type: string
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    price:
+                      type: number
+                  type: object
+                type: array
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Get all products
+      tags:
+      - Product
+  /product/create:
+    post:
+      consumes:
+      - application/json
+      description: Create a new product
+      parameters:
+      - description: Product details
+        in: body
+        name: product
+        required: true
+        schema:
+          properties:
+            description:
+              type: string
+            name:
+              type: string
+            price:
+              type: number
+          type: object
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            properties:
+              description:
+                type: string
+              id:
+                type: integer
+              name:
+                type: string
+              price:
+                type: number
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Create a new product
+      tags:
+      - Product
+swagger: "2.0"

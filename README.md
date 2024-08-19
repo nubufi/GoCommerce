@@ -29,21 +29,11 @@ Ensure that you have the following installed:
 	cd GoCommerce
 	```
     
-2. Install the dependencies:
-    ```sh
-    go mod tidy
-    ```
-    
-3. Deploy the redis and postgresql services via docker compose:   
+2. Build and deploy the app:   
     ```sh
     docker compose up --build
     ```
     
-4. Run the app: 
-    ```sh
-    go run cmd/main.go
-    ```    
-
 ### Running Tests
 
 To run the tests, use:
@@ -58,7 +48,7 @@ The application can be configured using environment variables. Refer to the `.en
 
 ## Usage
 
-The API documentation can be accessed at `http://localhost:8080/api/docs`.
+The API documentation can be accessed at `http://localhost:8080/docs/index.html`.
 
 ## Contributing
 

@@ -12,6 +12,18 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// SignUp godoc
+//
+//	@Summary		Create a new user
+//	@Description	Create a new user
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			user	body		object{email=string,password=string,first_name=string,last_name=string}	true	"User details"
+//	@Success		201		{object}	object{user=object{user_id=string,created_at=string,email=string,first_name=string,last_name=string,role=string}}
+//	@Failure		400		{object}	object{error=string}
+//	@Failure		409		{object}	object{error=string}
+//	@Router			/auth/signup [post]
 func SignUp(c *gin.Context) {
 	userRepo := repositories.NewUserRepository(db.DB)
 	// Get the JSON body and decode into variables
@@ -50,6 +62,19 @@ type body struct {
 	Password string `json:"password"`
 }
 
+// SignIn godoc
+//
+//	@Summary		Sign in
+//	@Description	Signs in the user, returns the user details and sets the jwt token
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			user	body		object{email=string,password=string}	true	"Login details"
+//	@Success		200		{object}	object{user=object{user_id=string,email=string,created_at=string,first_name=string,last_name=string,role=string}}
+//	@Failure		400		{object}	object{error=string}
+//	@Failure		401		{object}	object{error=string}
+//	@Failure		404		{object}	object{error=string}
+//	@Router			/auth/signin [post]
 func SignIn(c *gin.Context) {
 	userRepo := repositories.NewUserRepository(db.DB)
 	// Get the JSON body and decode into variables
@@ -80,11 +105,28 @@ func SignIn(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"user": user})
 }
 
+// SignOut godoc
+//
+//	@Summary		Sign out
+//	@Description	Signs out the user
+//	@Tags			Auth
+//	@Produce		json
+//	@Success		204
+//	@Router			/auth/signout [get]
 func SignOut(c *gin.Context) {
 	c.SetCookie("token", "", -1, "/", "", false, true)
 	c.JSON(http.StatusNoContent, nil)
 }
 
+// DeleteAccount godoc
+//
+//	@Summary		Delete the account
+//	@Description	Deletes the account and signs out the user
+//	@Tags			Auth
+//	@Produce		json
+//	@Success		204
+//	@Failure		500	{object}	object{error=string}
+//	@Router			/auth/delete [delete]
 func DeleteAccount(c *gin.Context) {
 	userRepo := repositories.NewUserRepository(db.DB)
 	userID := GetUserID(c)

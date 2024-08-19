@@ -3,7 +3,7 @@ FROM golang:1.23rc2-alpine3.19 AS builder
 # Set the Current Working Directory inside the container
 
 RUN go install github.com/air-verse/air@latest
-
+RUN go install github.com/swaggo/swag/cmd/swag@latest
 WORKDIR /app
 
 # Copy go.mod and go.sum files to the workspace

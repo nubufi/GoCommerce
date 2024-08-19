@@ -1,4 +1,23 @@
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile  # The Dockerfile for the Go application
+    container_name: go-commerce
+    ports:
+      - "8080:8080"  # Expose the app on port 8080
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      MYSQL_PORT: 3306
+      REDIS_PORT: 6379
+    networks:
+      - go-commerce_network
+    volumes:
+      - .:/app
+      - /app/tmp
+
   mysql:
     image: mysql:8.0
     container_name: mysql-db
@@ -10,14 +29,21 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - go-commerce_network
 
   redis:
     image: redis:alpine
     container_name: redis
     ports:
       - "6379:6379"
+    networks:
+      - go-commerce_network
 
 volumes:
   mysql_data:
     driver: local
 
+networks:
+  go-commerce_network:
+    driver: bridge

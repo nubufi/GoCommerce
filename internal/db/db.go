@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"GoCommerce/internal/models"
 
@@ -30,7 +31,8 @@ func ConnectToDb() {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Asia%%2FShanghai", user, password, host, port, dbName)
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		time.Sleep(5 * time.Second)
+		ConnectToDb()
 	}
 	DB.Debug()
 	log.Println("Connected to database")

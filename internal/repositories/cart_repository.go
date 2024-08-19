@@ -21,6 +21,7 @@ type cartRepository struct {
 	db *gorm.DB
 }
 
+// NewCartRepository creates a new cart repository
 func NewCartRepository(db *gorm.DB) CartRepository {
 	return &cartRepository{db: db}
 }
@@ -42,7 +43,6 @@ func (r *cartRepository) CreateCartItem(item *models.CartItem) error {
 	db.ClearCache("cartItems")
 	return r.db.Create(item).Error
 }
-
 
 func (r *cartRepository) UpdateCartItem(item *models.CartItem) error {
 	db.ClearCache("cartItems")
@@ -66,8 +66,3 @@ func (r *cartRepository) DeleteCartItem(itemID uint) error {
 	db.ClearCache("cartItems")
 	return r.db.Where("id = ?", itemID).Delete(&models.CartItem{}).Error
 }
-
-
-
-
-

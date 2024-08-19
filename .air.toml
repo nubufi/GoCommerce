@@ -3,15 +3,15 @@ tmp_dir = "tmp"
 
 [build]
   bin = "./tmp/go-commerce"
-  cmd = "go build -o ./tmp/go-commerce ./cmd/main.go"
+  cmd = "swag fmt && swag init -g **/**/*.go && go build -o ./tmp/go-commerce ./cmd/main.go"
   delay = 1000  
-  exclude_dir = ["tmp"]
+  exclude_dir = ["tmp","docs"]
   exclude_file = []
   exclude_unchanged = false
   follow_symlink = false
   full_bin = ""
   include_dir = []
-  include_ext = ["go","mod","sum","env"]
+  include_ext = ["go","mod","sum","env","toml"]
   kill_delay = "0s"
   log = "build-errors.log"
   send_interrupt = false

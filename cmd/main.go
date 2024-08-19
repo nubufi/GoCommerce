@@ -1,12 +1,15 @@
 package main
 
 import (
+	_ "GoCommerce/docs"
 	"GoCommerce/internal/controllers"
 	"GoCommerce/internal/db"
 	"GoCommerce/internal/middlewares"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func init() {
@@ -16,9 +19,20 @@ func init() {
 	db.Migrate()
 }
 
+//	@title			GoCommerce API
+//	@version		1.0
+//	@description	This is a sample server for GoCommerce.
+
+//	@contact.name	Numan Burak Fidan
+//	@contact.url	https://numanburakfidan.com
+//	@contact.email	numanburakfidan@yandex.com
+
+// @host		localhost:8080
+// @BasePath	/
 func main() {
 	app := gin.New()
 
+	app.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	auth := app.Group("/auth")
 	auth.POST("/signup", controllers.SignUp)
 	auth.POST("/signin", controllers.SignIn)

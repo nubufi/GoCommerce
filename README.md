@@ -23,24 +23,15 @@ Ensure that you have the following installed:
 
 ### Installation
 
-1. Clone the repository:   
-	```sh
-	git clone https://github.com/nubufi/GoCommerce.git 
-	cd GoCommerce
-	```
-    
-2. Build and deploy the app:   
-    ```sh
-    docker compose up --build
-    ```
-    
-### Running Tests
-
-To run the tests, use:
-
-```sh
-go test ./...
-```
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/nubufi/GoCommerce.git
+   cd GoCommerce
+   ```
+2. Build and deploy the app:
+   ```sh
+   docker compose up --build
+   ```
 
 ## Configuration
 
